@@ -2,19 +2,35 @@ import docx
 import openai
 import re
 import json
+import sys
 
 def truncate_string(s):
     if len(s) > 500:
         truncated = s[-300:]
-        last_space_idx = truncated.rfind(' ')
+        last_space_idx = truncated.find(' ')
         if last_space_idx != -1 and last_space_idx < len(truncated) - 1:
-            truncated = '...' + truncated[last_space_idx + 1:]
+            truncated = truncated[last_space_idx + 1:]
         return truncated
     else:
         return s
 
+
+
+
+if len(sys.argv) != 2:
+    print("Usage: python translate.py <word document>")
+    sys.exit(1)
+
+filename = sys.argv[1]
+#output_filename = filename.split('.')[0] + '_translate.' + filename.split('.')[1]
+output_filename = filename.split('.')[0] + '.json'
+
+
+print(filename)
+print(output_filename)
+
 # Load the Word document
-doc = docx.Document("docs/page_066_do.docx");
+doc = docx.Document(filename)
 # Authenticate to OpenAI API
 with open("openapi.key", 'r') as f:
         lines = f.readlines()
@@ -107,10 +123,12 @@ text:
           # Get the translated text
           print(translation)
           translated_text = translation["choices"][0]["message"]["content"]
+          print(translated_text)
 
           #translated_text = translation.choices[0].text.strip()
 
           # Write the translated text to the file
+          entry["prompt"]=prompt
           entry["chat_output"]=translated_text
           tr_output.append(entry)
           f.write(translated_text + "\n")
@@ -118,5 +136,5 @@ text:
           #if (para_count>5):
           #   exit()
           #exit()
-with open('translated.json', 'w') as f:
+with open(output_filename, 'w') as f:
     json.dump(tr_output, f)
