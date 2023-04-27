@@ -73,33 +73,34 @@ with open("translated.txt", "w", encoding="utf-8") as f:
         f.write("\n---\n"+para.text+"\n")
         if (len(text)>0 and noJapanese==False):
           # Translate the text from Japanese to English using the OpenAI API
-          prompt=f"""Below is a set of Japanese text generated from an OCR of a manual for a
-1980s era microcomputer. The goal is to create a usable translation to help
-developers who cannot read Japanese. 
+          prompt=f"""You are an AI whose job it is to produce the best translation from some
+OCR text_to_translate from a 1980s era Japanese microcomputer manual. To help you,
+you have previous_text which is the OCR output of the text that came
+before the text_to_translate.
 
 Do the following:
-1. Look at the input OCR-generated text
-2. Determine if it makes sense given being from a microcomputer user manual
-3. If the text makes sense, does not likely contain OCR errors, please
-produce output of a section TRANSLATION followed by the translation and
-jump to step 6
-4. If the text does not make sense or likely contains OCR errors, and it
-is possible to predict the original text, then try to guess the likely
-original text and output CORRECTED_TEXT followed by a guess of the
-corrected text and CORRECTED_TRANSLATION followed by the corrected
-translation. Then jump to step 6.
-5. Output UNKNOWN
-6. Generate an output block CONFIDENCE where you estimate the liklihood
-that the translation is the correct of the original Japanese text before
-OCR where 0 means very low likelihood and 10 meaning high likelihood.
 
-previous text:
-{prev}
+1. Look at the input OCR-generated text_to_translate
+2. Determine if text_to_translate makes sense given being from a
+microcomputer user manual, if so output the translation of
+text_to_translate in a section TRANSLATION, jump to step 5
+3. If text_text_to_translate does not make sense due to possible OCR
+errors, then attempt to correct for the OCR errors and output the
+translation of the corrected text_to_translate in a section
+CORRECTED_TRANSLATION, jump to step 5
+4. Output UNKNOWN
+5. Generate an output block CONFIDENCE containing an estimate between 0
+and 10 of he liklihood that the translation is the correct of the
+original Japanese text before OCR where 0 means very low likelihood and
+10 meaning high likelihood.
 
-text:
+text_to_translate: text:
 {text}
+
+
+previous_text:
+{prev}
 """
-          #prompt=f"Translate the following text about the Japanese FM-7 computer into English: {text}"
           prev = prev + ' ' + text 
           prev = truncate_string(prev)
 
