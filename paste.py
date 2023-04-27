@@ -101,6 +101,8 @@ for para in doc.paragraphs:
       trans = records[count]["TRANSLATION"]
     print('count:'+ str(count))
     print('doctext:'+ text)
+    if len(text.strip().lstrip())<1:
+      continue
     print('orig:'+ orig)
     print('trans:'+trans)
     print("CHECK:")
