@@ -38,7 +38,9 @@ for record in translation:
     # Parse the free-form data structure
     data = {}
     data["ORIGINAL"]=original_text
-    lines = chat_output
+    data["index"]=record["index"]
+    data["nojap"]=record["nojap"]
+    lines = chat_output.split("\n")
     print("LINES[")
     print(lines)
     print("]LINES")
@@ -49,7 +51,7 @@ for record in translation:
             if line:
                 if line.startswith("UNKNOWN"):
                     data["UNKNOWN"]="true"
- 
+                print(line) 
                 if line.count(":") == 1 and line.index(":") > 0 and not " " in line[:line.index(":")]:
                     if key:
                         data[key] = "\n".join(value_lines)
@@ -70,7 +72,6 @@ for record in translation:
     print(record)
     print("Original Text: ", original_text)
     print("Parsed Data: ", data)
-    quit()
 print("-----")
 print(records)
 
@@ -85,9 +86,9 @@ def lookup_translation(phrase, translation_table):
     else:
         return None
 
-quit()
+count = 0
+
 # Iterate over each paragraph in the document
-count = 6
 for para in doc.paragraphs:
   # Extract the text from the paragraph
   text = para.text
@@ -102,7 +103,10 @@ for para in doc.paragraphs:
     print('doctext:'+ text)
     print('orig:'+ orig)
     print('trans:'+trans)
+    print("CHECK:")
     print(text==orig)
+    print(text,'|',orig)
+    print("____")
     newtrans = lookup_translation(trans, translations)
     if (newtrans) :
       print("GOT NEW TRANS")
@@ -118,10 +122,6 @@ for para in doc.paragraphs:
     if ("Unknown" in records[count]):
       badtranslation = True
     badtranslation = False
-    for word in blocklist:
-      if word in trans:
-         print("BADTRANSLATION")
-         badtranslation = True
     if len(orig) == 0:
       badtranslation = True
     #if len(records[count].original) and len(records[count].original) < 15  and len(records[count].translated) / len(records[count].original)  > 5:
@@ -139,5 +139,5 @@ for para in doc.paragraphs:
 
  
 
-doc.save('NEW--FM-7_SYSMN_NEW.docx')
+doc.save('NEW.docx')
  
